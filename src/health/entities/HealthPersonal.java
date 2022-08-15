@@ -27,10 +27,10 @@ public class HealthPersonal {
 			public void run() {
 				if( !patients.isEmpty() ) {
 					RegisterMeasured patient = patients.poll();
-					console.append("Case attended: " + patient.getName() + " - "  + patient.getMeasure()+"\n" );
+					console.append(name + " attended case: " + patient.getName() + " - "  + patient.getMeasure() +"\n" );
 				}
 			}
-		}, DELAY);
+		}, DELAY, DELAY);
 	}
 	
 	public String getName() {

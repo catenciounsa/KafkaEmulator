@@ -19,7 +19,7 @@ public abstract class MonitoredPerson extends Register {
 	protected Timer timer;
 	protected KafkaProducerService service = KafkaProducerService.getInstance(); 
 	public static final int REFRESH_RATE = 1000; //nanosecs
-	public static final double ALERT_CONDITION_PROB = 0.01;
+	public static final double ALERT_CONDITION_PROB = 0.4;
 	
 	public MonitoredPerson(String topic, String name, char sex, int age, int height, int weight) {
 		super(name, sex, age, height, weight);

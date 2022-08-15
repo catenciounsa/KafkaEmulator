@@ -5,13 +5,27 @@ import java.util.List;
 
 import javax.swing.JTextArea;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import health.entities.HealthPersonal;
 import health.entities.RegisterMeasured;
 
-public class EmergencyAttention extends javax.swing.table.AbstractTableModel{
+/**
+ * It is an implementation of an AbstracTableModel
+ * It has problems showing the number of patients associated to each doctor.
+ * @author Carlos Atencio-Torres
+ * @email catencio@unsa.edu.pe
+ */
+public class DoctorsAdministrator extends javax.swing.table.AbstractTableModel{
+	private static final Logger log = LoggerFactory.getLogger(DoctorsAdministrator.class);
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	private List<HealthPersonal> healthPersonal;
 	
-	public EmergencyAttention(JTextArea console) {
+	public DoctorsAdministrator(JTextArea console) {
 		healthPersonal = new ArrayList<HealthPersonal>();
 		
 		healthPersonal.add( new HealthPersonal("Ana Santos", "doctor", console) );
@@ -26,6 +40,7 @@ public class EmergencyAttention extends javax.swing.table.AbstractTableModel{
 	 * @param patient
 	 */
 	public void addPatient(RegisterMeasured patient) {
+		log.info("Assigning a new patient for the pool of doctors" );
 		int lowPatients = healthPersonal.get(0).getPatients().size();
 		int lowWinner = 0;
 		for(int i=1; i<healthPersonal.size(); i++) {
@@ -34,7 +49,13 @@ public class EmergencyAttention extends javax.swing.table.AbstractTableModel{
 				lowPatients = healthPersonal.get(i).getPatients().size();
 			}
 		}
+		
 		healthPersonal.get(lowWinner).addPatient(patient);
+		setValueAt("berta", lowWinner, 0);
+
+		fireTableCellUpdated(lowWinner, 2);
+		//fireTableDataChanged();
+		
 	}
 
 	@Override

@@ -5,6 +5,8 @@ import java.awt.Font;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -13,11 +15,18 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 
-import health.emulator.personal.EmergencyAttention;
+import health.emulator.personal.AlertsAdministrator;
+import health.emulator.personal.DoctorsAdministrator;
 import health.entities.RegisterMeasured;
+import health.kafkaservice.monitor.AlertTopicMonitor;
 
 public class AlertMonitorEmulator extends JFrame {
-	private static final long DELAY = 1000;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	private static final long DELAY = 200;
 	
 	private JTable tableAlerts;
 	private JTable tableDoctors;
@@ -27,27 +36,28 @@ public class AlertMonitorEmulator extends JFrame {
 	private JLabel consoleLabel;
 	
 	private List<RegisterMeasured> alerts;
-	private EmergencyAttention attention;
+	private DoctorsAdministrator doctorAttention;
+	private AlertsAdministrator alertAttention;
 	
 	public AlertMonitorEmulator() {
 		alerts = Collections.synchronizedList(new ArrayList<>());
 		
 		console = new JTextArea();
-		attention = new EmergencyAttention(console);
+		doctorAttention = new DoctorsAdministrator(console);
+		alertAttention = new AlertsAdministrator(alerts);
 		
 		Timer timer = new Timer();
-		timer.schedule( new AlertTopicMonitor(alerts), 0, DELAY);
+		timer.schedule( new AlertTopicMonitor(alertAttention), 0,  DELAY);
 		timer.schedule( new TimerTask() {
 			@Override
 			public void run() {
 				if( !alerts.isEmpty() ) {
-					attention.addPatient(alerts.remove(0));
+					doctorAttention.addPatient(alerts.remove(0));
+					tableDoctors.revalidate();
 				}
-				tableDoctors.repaint();
-				tableAlerts.repaint();
 			}
 			
-		}, DELAY);
+		}, 0, DELAY);
 		
 		setTitle("Alert Monitor");
 
@@ -61,47 +71,6 @@ public class AlertMonitorEmulator extends JFrame {
 
 	}
 	
-	class AlertTableModel extends javax.swing.table.AbstractTableModel{
-		private final List<RegisterMeasured> alertsRef;
-		private String[] headers = new String[] {"Name", "Sex", "Age", "Height", "Weight", "Measure"};
-		
-		public AlertTableModel(List<RegisterMeasured> alertsRef) {
-			super( );
-			this.alertsRef = alertsRef;
-		}
-		
-		@Override
-		public String getColumnName(int column) {
-			if( column < headers.length )
-				return headers[column];
-			return "";
-		}
-
-		@Override
-		public int getColumnCount() {
-			return 6; //name/sex/age/height/weight/measure
-		}
-
-		@Override
-		public int getRowCount() {
-			return alertsRef.size();
-		}
-
-		@Override
-		public Object getValueAt(int row, int col) {
-			switch(col) {
-			case 0: return this.alertsRef.get(row).getName();
-			case 1: return this.alertsRef.get(row).getSex();
-			case 2: return this.alertsRef.get(row).getAge();
-			case 3: return this.alertsRef.get(row).getHeight();
-			case 4: return this.alertsRef.get(row).getWeight();
-			case 5: return this.alertsRef.get(row).getMeasure();
-			}
-			return null;
-		}
-		
-	}
-	
 	private void configureComponents() {
 		setLayout( null);
 		
@@ -112,8 +81,8 @@ public class AlertMonitorEmulator extends JFrame {
 		consoleLabel = new JLabel("Attentions");
 		consoleLabel.setFont( new Font("verdana", Font.PLAIN, 20));
 		
-		tableDoctors = new JTable( new EmergencyAttention(console) );
-		tableAlerts = new JTable( new AlertTableModel(alerts)  );
+		tableDoctors = new JTable( doctorAttention );
+		tableAlerts = new JTable( alertAttention  );
 		tableDoctors.setFont(new Font("verdana", Font.PLAIN, 16));
 		
 		JScrollPane tableDoctorScroll = new JScrollPane(tableDoctors);
@@ -127,6 +96,16 @@ public class AlertMonitorEmulator extends JFrame {
 		panel2.add( consoleLabel, BorderLayout.NORTH );
 		panel2.add( consoleScroll, BorderLayout.CENTER );
 		panel2.setBounds(20, 120, 450, 200 );
+		/*JButton launcher = new JButton("ADDROW");
+		panel2.add( launcher, BorderLayout.EAST );
+		launcher.addActionListener( new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent arg0) {
+				JOptionPane.showMessageDialog(null, "HOLA");
+				alertAttention.addPatient( new RegisterMeasured("Test", 'X', 17, 120, 60, "Alert test"));
+			}
+		});*/
 
 		JScrollPane tableAlertScroll = new JScrollPane(tableAlerts);
 		JPanel panel3 = new JPanel(new BorderLayout());
