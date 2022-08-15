@@ -8,6 +8,12 @@ public class Register {
 	protected final int height;
 	protected final int weight;
 	
+	public Register() {
+		name = "unknown";
+		sex = 'X';
+		age = height = weight = 0;
+	}
+	
 	public Register(String name, char sex, int age, int height, int weight) {
 		super();
 		this.name = name;

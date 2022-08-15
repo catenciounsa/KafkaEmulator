@@ -144,7 +144,7 @@ public class GlucoseEmulator extends JFrame {
 		
 		public void paintComponent( Graphics g ) {
 			try {
-				BufferedImage image = ImageIO.read( new File("/etc/monitor.jpg") );
+				BufferedImage image = ImageIO.read( new File("etc/monitor.jpg") );
 				
 				int w = image.getWidth(), h = image.getHeight();
 				

@@ -8,7 +8,7 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.StringSerializer;
 
 import health.entities.RegisterMeasured;
-import health.kafkaservice.serializer.RegisterSerializer;
+import health.kafkaservice.serialization.RegisterSerializer;
 
 public class KafkaProducerService {	
 	private KafkaProducer<String, RegisterMeasured> producer;

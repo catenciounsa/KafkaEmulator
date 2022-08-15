@@ -13,8 +13,8 @@ import health.kafkaservice.monitor.MonitoredPerson;
 public class PersonSmartwatchHeart extends MonitoredPerson {
 	
 	private int bpm;
-	private static final int MIN_BPM= 60;
-	private static final int MAX_BPM= 110;
+	private static final int MIN_BPM= 52; //normal value for most conditions
+	private static final int MAX_BPM= 80; //normal value for most conditions
 
 	public PersonSmartwatchHeart(String name, char sex, int age, int height, int weight) {
 		super(KafkaConfiguration.HEART_TOPIC,name, sex, age, height, weight);
@@ -31,7 +31,10 @@ public class PersonSmartwatchHeart extends MonitoredPerson {
 	
 	@Override
 	public RegisterMeasured nextMeasure() {
-		this.bpm = MIN_BPM + (int) ((MAX_BPM - MIN_BPM) * Math.random());
+		if( Math.random() <= ALERT_CONDITION_PROB )
+			return alertOnPurpose();
+		else 
+			this.bpm = MIN_BPM + (int) ((MAX_BPM - MIN_BPM) * Math.random()); //normal condition.
 		return new RegisterMeasured(name, sex, age, height, weight, ""+bpm);
 	}
 	

@@ -1,4 +1,4 @@
-package health.kafkaservice.serializer;
+package health.kafkaservice.serialization;
 
 import org.apache.kafka.common.serialization.Serializer;
 

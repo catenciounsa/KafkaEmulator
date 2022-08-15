@@ -13,8 +13,8 @@ import health.kafkaservice.monitor.MonitoredPerson;
 
 public class PersonMonitorGlucose extends MonitoredPerson {
 	private int glucose;
-	private static final int MIN_GLUCOSE = 50;
-	private static final int MAX_GLUCOSE = 200;
+	private static final int MIN_GLUCOSE = 80; //normal for most conditions
+	private static final int MAX_GLUCOSE = 125; //normal for most conditions
 
 	public PersonMonitorGlucose(String name, char sex, int age, int height, int weight) {
 		super(KafkaConfiguration.GLUCOSE_TOPIC, name, sex, age, height, weight);
@@ -31,7 +31,10 @@ public class PersonMonitorGlucose extends MonitoredPerson {
 
 	@Override
 	public RegisterMeasured nextMeasure() {
-		this.glucose = MIN_GLUCOSE + (int) ((MAX_GLUCOSE - MIN_GLUCOSE) * Math.random());
+		if( Math.random() <= ALERT_CONDITION_PROB )
+			return alertOnPurpose();
+		else 
+			this.glucose = MIN_GLUCOSE + (int) ((MAX_GLUCOSE - MIN_GLUCOSE) * Math.random()); //normal condition
 		return  new RegisterMeasured(name, sex, age, height, weight, ""+glucose);
 	}
 

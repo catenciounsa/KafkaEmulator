@@ -1,4 +1,4 @@
-package health.kafkaservice.serializer;
+package health.kafkaservice.serialization;
 
 import org.apache.kafka.common.serialization.Deserializer;
 
@@ -19,6 +19,7 @@ public class RegisterDeserializer implements Deserializer<RegisterMeasured> {
 			return objectMapper.readValue(registerMeasured, RegisterMeasured.class);
 		} catch( Exception e ) {
 			System.err.println("Error trying to deserializing");
+			e.printStackTrace();
 		}
 		return null;
 	}

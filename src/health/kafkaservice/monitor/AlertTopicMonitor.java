@@ -1,6 +1,7 @@
 package health.kafkaservice.monitor;
 
 import java.time.Duration;
+import java.util.List;
 
 import javax.swing.JOptionPane;
 
@@ -11,9 +12,11 @@ import health.entities.RegisterMeasured;
 import health.kafkaservice.KafkaConfiguration;
 
 public class AlertTopicMonitor extends Monitor {
+	private final List<RegisterMeasured> alertsReference;
 
-	public AlertTopicMonitor() {
+	public AlertTopicMonitor(List<RegisterMeasured> alertsReference) {
 		super("alert", KafkaConfiguration.ALERT_TOPIC);
+		this.alertsReference = alertsReference;
 	}
 
 	@Override
@@ -22,7 +25,7 @@ public class AlertTopicMonitor extends Monitor {
 		
 		for(ConsumerRecord<String, RegisterMeasured> record : records ) {
 			RegisterMeasured val = record.value();
-			JOptionPane.showMessageDialog(null, val.getName() + " => " + val.getMeasure() );
+			alertsReference.add(val);
 		}
 	}
 
