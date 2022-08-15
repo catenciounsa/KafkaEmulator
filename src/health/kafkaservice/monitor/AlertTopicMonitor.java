@@ -2,8 +2,7 @@ package health.kafkaservice.monitor;
 
 import java.time.Duration;
 import java.util.List;
-
-import javax.swing.JOptionPane;
+import java.util.Queue;
 
 import org.apache.kafka.clients.consumer.ConsumerRecord;
 import org.apache.kafka.clients.consumer.ConsumerRecords;
